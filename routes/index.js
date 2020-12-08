@@ -2,6 +2,7 @@ var express = require('express');
 var mysql = require('mysql');
 var hbs = require('hbs');
 const multer = require('multer');
+const pool = require('../core/pool'); //for db connection
 const User = require('../core/user');
 var router = express.Router();
 var i;
@@ -29,22 +30,10 @@ let logoimg,adminPhone,adminEmailid,adminAddress,happycustomer,propertyinstock,c
 
 
 let totalPages=0,currPage=0,profileimg="";
+let sql = "SELECT * FROM properties"; 
+pool.query(sql, function(err, result) {
+	if(err) throw err
 
-let con1 = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "",
-	database: 'rfs_db_5techg'
-
-	});
-	
-	con1.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
-  
-  con1.query('SELECT * FROM properties', function(err, result) {
-        if (err) throw err
-		
 		let totalProperties = result.length;
 		
 		totalPages = totalProperties/12;
@@ -52,13 +41,11 @@ let con1 = mysql.createConnection({
 			
       });
 	  
-	  
-	
-	  
-	  
-	  con1.query('SELECT * FROM admindata', function(err, results) {
-        if (err) throw err
-		
+	 
+        let sql2 = "SELECT * FROM admindata"; 
+		pool.query(sql2, function(err, results) {
+			if(err) throw err
+
 		logoimg=results[0].logo;
 		adminPhone=results[0].adminMobileNumber;
 		adminEmailid=results[0].adminEmailId;
@@ -74,11 +61,7 @@ let con1 = mysql.createConnection({
 			
   });
 	  
-
-  });  
  
-
-
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -87,24 +70,13 @@ router.get('/', function(req, res, next) {
 	  
 	  if(user)
 	  {
-		  var con3 = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "",
-	database: 'rfs_db_5techg'
-
-	});
-	
-	con3.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
-  
-	con3.query('SELECT * FROM users WHERE userId = '+ user.userId+' ', function(err, results) {
+		 
+		let sql = "SELECT * FROM users WHERE userId = '"+ user.userId+"'"; 
+		pool.query(sql, function(err, results) {
 			if (err) throw err
 			
 			g=' <style> .dropbtn { background-color: #4CAF50; color: white;  padding: 16px;  font-size: 16px; border: none; } .image-circle {  position: relative; display: inline-block; } .dropdown-content {  display: none;  position: absolute;  background-color: #f1f1f1;  min-width: 160px;  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);  z-index: 1; } .dropdown-content a {  color: black;  padding: 12px 16px;  text-decoration: none;  display: block; } .dropdown-content a:hover {background-color: #ddd;}.dropdown:hover .dropdown-content {display: block;}.dropdown:hover .dropbtn {background-color: #3e8e41;} </style> <div class="dropdown"> <img src="'+results[0].profileImage+'" class="img-circle" width="70" height="70">  </a>  <div class="dropdown-content">    <a href="/userProfile">Profile</a>    <a href="/userProperties">Properties</a> <a href="/submitProperty">Submit Property</a>   <a href="/Logout">Logout</a>  </div> </div>  <br>';
 	  
-	});
 	});
 	
 	
@@ -114,22 +86,13 @@ router.get('/', function(req, res, next) {
 		  g='<a href="/register"> <button class="navbar-btn nav-button wow bounceInRight login" data-wow-delay="0.45s">Login</button>  </a>';
 	  }
 	
-	var con = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "",
-	database: 'rfs_db_5techg'
 
-	});
-	
-	con.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
-  
-  con.query('SELECT * FROM properties WHERE topStatus= 1 LIMIT 7', function(err, results) {
+	  let sql = "SELECT * FROM properties WHERE topStatus= 1 LIMIT 7"; 
+	  pool.query(sql, function(err, results) {
         if (err) throw err
 		
-		 con.query('SELECT * FROM feedback ', function(err, result) {
+		let sql2 = "SELECT * FROM feedback"; 
+		pool.query(sql2, function(err, result) {
         if (err) throw err
 		
 		
@@ -142,7 +105,6 @@ router.get('/', function(req, res, next) {
 });
 	
   
-});
 
 router.get('/register', function(req, res, next) {
 	
@@ -168,26 +130,13 @@ router.get('/faq', function(req, res, next) {
 	  
 	  if(user)
 	  {
-		  var con3 = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "",
-	database: 'rfs_db_5techg'
-
-	});
-	
-	con3.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
-  
-	con3.query('SELECT * FROM users WHERE userId = '+ user.userId+' ', function(err, results) {
-			if (err) throw err
-			
-			g=' <style> .dropbtn { background-color: #4CAF50; color: white;  padding: 16px;  font-size: 16px; border: none; } .image-circle {  position: relative; display: inline-block; } .dropdown-content {  display: none;  position: absolute;  background-color: #f1f1f1;  min-width: 160px;  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);  z-index: 1; } .dropdown-content a {  color: black;  padding: 12px 16px;  text-decoration: none;  display: block; } .dropdown-content a:hover {background-color: #ddd;}.dropdown:hover .dropdown-content {display: block;}.dropdown:hover .dropbtn {background-color: #3e8e41;} </style> <div class="dropdown"> <img src="'+results[0].profileImage+'" class="img-circle" width="70" height="70">  </a>  <div class="dropdown-content">    <a href="/userProfile">Profile</a>    <a href="/userProperties">Properties</a> <a href="/submitProperty">Submit Property</a>   <a href="/Logout">Logout</a>  </div> </div>  <br>';
-	  
-	});
-	});
-	
+		 	 let sql = " SELECT * FROM users WHERE userId = '"+ user.userId+"' ";
+			pool.query(sql, function(err, results) {
+				if (err) throw err
+				
+				g=' <style> .dropbtn { background-color: #4CAF50; color: white;  padding: 16px;  font-size: 16px; border: none; } .image-circle {  position: relative; display: inline-block; } .dropdown-content {  display: none;  position: absolute;  background-color: #f1f1f1;  min-width: 160px;  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);  z-index: 1; } .dropdown-content a {  color: black;  padding: 12px 16px;  text-decoration: none;  display: block; } .dropdown-content a:hover {background-color: #ddd;}.dropdown:hover .dropdown-content {display: block;}.dropdown:hover .dropbtn {background-color: #3e8e41;} </style> <div class="dropdown"> <img src="'+results[0].profileImage+'" class="img-circle" width="70" height="70">  </a>  <div class="dropdown-content">    <a href="/userProfile">Profile</a>    <a href="/userProperties">Properties</a> <a href="/submitProperty">Submit Property</a>   <a href="/Logout">Logout</a>  </div> </div>  <br>';
+		
+			});
 	
 	}
 	  else
@@ -196,7 +145,7 @@ router.get('/faq', function(req, res, next) {
 		  g='<a href="/register"> <button class="navbar-btn nav-button wow bounceInRight login" data-wow-delay="0.45s">Login</button>  </a>';
 	  }
 	
-  res.render('faq', { title: 'FAQ', u:g ,logo:logoimg ,ph: adminPhone ,emailid: adminEmailid , add: adminAddress});
+ 	 res.render('faq', { title: 'FAQ', u:g ,logo:logoimg ,ph: adminPhone ,emailid: adminEmailid , add: adminAddress});
 });
 
 
@@ -206,29 +155,15 @@ router.get('/submitProperty', function(req, res, next) {
 	  
 	if(user)
 	  {
-		  var con3 = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "",
-	database: 'rfs_db_5techg'
-
-	});
-	
-	con3.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
-  
-	con3.query('SELECT * FROM users WHERE userId = '+ user.userId+' ', function(err, results) {
-			if (err) throw err
-			
-			g=' <style> .dropbtn { background-color: #4CAF50; color: white;  padding: 16px;  font-size: 16px; border: none; } .image-circle {  position: relative; display: inline-block; } .dropdown-content {  display: none;  position: absolute;  background-color: #f1f1f1;  min-width: 160px;  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);  z-index: 1; } .dropdown-content a {  color: black;  padding: 12px 16px;  text-decoration: none;  display: block; } .dropdown-content a:hover {background-color: #ddd;}.dropdown:hover .dropdown-content {display: block;}.dropdown:hover .dropbtn {background-color: #3e8e41;} </style> <div class="dropdown"> <img src="'+results[0].profileImage+'" class="img-circle" width="70" height="70">  </a>  <div class="dropdown-content">    <a href="/userProfile">Profile</a>    <a href="/userProperties">Properties</a> <a href="/submitProperty">Submit Property</a>   <a href="/Logout">Logout</a>  </div> </div>  <br>';
-	  
-	});
-	});
-	
-	
-	
-		  res.render('submitProperty', { title: 'SubmitProperty', u:g ,logo:logoimg ,ph: adminPhone ,emailid: adminEmailid , add: adminAddress});
+		let sql = " SELECT * FROM users WHERE userId = '"+ user.userId+"' ";
+		pool.query(sql, function(err, results) {
+				if (err) throw err
+				
+				g=' <style> .dropbtn { background-color: #4CAF50; color: white;  padding: 16px;  font-size: 16px; border: none; } .image-circle {  position: relative; display: inline-block; } .dropdown-content {  display: none;  position: absolute;  background-color: #f1f1f1;  min-width: 160px;  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);  z-index: 1; } .dropdown-content a {  color: black;  padding: 12px 16px;  text-decoration: none;  display: block; } .dropdown-content a:hover {background-color: #ddd;}.dropdown:hover .dropdown-content {display: block;}.dropdown:hover .dropbtn {background-color: #3e8e41;} </style> <div class="dropdown"> <img src="'+results[0].profileImage+'" class="img-circle" width="70" height="70">  </a>  <div class="dropdown-content">    <a href="/userProfile">Profile</a>    <a href="/userProperties">Properties</a> <a href="/submitProperty">Submit Property</a>   <a href="/Logout">Logout</a>  </div> </div>  <br>';
+		
+		});
+		
+		res.render('submitProperty', { title: 'SubmitProperty', u:g ,logo:logoimg ,ph: adminPhone ,emailid: adminEmailid , add: adminAddress});
 	  }
 	  else
 	  {
@@ -246,19 +181,9 @@ router.get('/userProfile', function(req, res, next) {
 	  if(user)
 	  {
 		 	   
-	  var con3 = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "",
-	database: 'rfs_db_5techg'
-
-	});
-	
-	con3.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
   
-	con3.query('SELECT * FROM users WHERE userId = '+ user.userId+' ', function(err, results) {
+		let sql = " SELECT * FROM users WHERE userId = '"+ user.userId+"' ";
+		pool.query(sql, function(err, results) {
 			if (err) throw err
 			
 			g=' <style> .dropbtn { background-color: #4CAF50; color: white;  padding: 16px;  font-size: 16px; border: none; } .image-circle {  position: relative; display: inline-block; } .dropdown-content {  display: none;  position: absolute;  background-color: #f1f1f1;  min-width: 160px;  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);  z-index: 1; } .dropdown-content a {  color: black;  padding: 12px 16px;  text-decoration: none;  display: block; } .dropdown-content a:hover {background-color: #ddd;}.dropdown:hover .dropdown-content {display: block;}.dropdown:hover .dropbtn {background-color: #3e8e41;} </style> <div class="dropdown"> <img src="'+results[0].profileImage+'" class="img-circle" width="70" height="70">  </a>  <div class="dropdown-content">    <a href="/userProfile">Profile</a>    <a href="/userProperties">Properties</a> <a href="/submitProperty">Submit Property</a>   <a href="/Logout">Logout</a>  </div> </div>  <br>';
@@ -269,8 +194,7 @@ router.get('/userProfile', function(req, res, next) {
 	
 					
 		});	
-		
-		});	
+			
 		  
 	  }
 	  else
@@ -291,25 +215,15 @@ router.get('/properties', function(req, res, next) {
 	  
 	if(user)
 	  {
-		  var con3 = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "",
-	database: 'rfs_db_5techg'
-
-	});
-	
-	con3.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
+		 
   
-	con3.query('SELECT * FROM users WHERE userId = '+ user.userId+' ', function(err, results) {
+		let sql = " SELECT * FROM users WHERE userId = '"+ user.userId+"' ";
+		pool.query(sql, function(err, results) {
 			if (err) throw err
 			
 			g=' <style> .dropbtn { background-color: #4CAF50; color: white;  padding: 16px;  font-size: 16px; border: none; } .image-circle {  position: relative; display: inline-block; } .dropdown-content {  display: none;  position: absolute;  background-color: #f1f1f1;  min-width: 160px;  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);  z-index: 1; } .dropdown-content a {  color: black;  padding: 12px 16px;  text-decoration: none;  display: block; } .dropdown-content a:hover {background-color: #ddd;}.dropdown:hover .dropdown-content {display: block;}.dropdown:hover .dropbtn {background-color: #3e8e41;} </style> <div class="dropdown"> <img src="'+results[0].profileImage+'" class="img-circle" width="70" height="70">  </a>  <div class="dropdown-content">    <a href="/userProfile">Profile</a>    <a href="/userProperties">Properties</a> <a href="/submitProperty">Submit Property</a>   <a href="/Logout">Logout</a>  </div> </div>  <br>';
 	  
-	});
-	});
+		});
 	
 	
 	}
@@ -318,23 +232,14 @@ router.get('/properties', function(req, res, next) {
 		  g='<a href="/register"> <button class="navbar-btn nav-button wow bounceInRight login" data-wow-delay="0.45s">Login</button>  </a>';
 	  }
 	  
-	  var con = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "",
-	database: 'rfs_db_5techg'
-
-	});
-	
-	con.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
+	 
   
   currPage=0;
   
   if(currPage >= totalPages-1)
   {
-	  con.query('SELECT * FROM properties', function(err, results) {
+		let sql = " SELECT * FROM properties ";
+		pool.query(sql, function(err, results) {
 			if (err) throw err
 		
 			res.render('properties', { title: 'Properties' ,u:g , data: results ,logo:logoimg ,ph: adminPhone ,emailid: adminEmailid  , add: adminAddress , page:'' });
@@ -345,7 +250,8 @@ router.get('/properties', function(req, res, next) {
   }
   else
   {
-	  con.query('SELECT * FROM properties LIMIT 12', function(err, results) {
+		let sql = "SELECT * FROM properties LIMIT 12";
+		pool.query(sql, function(err, results) {
 			if (err) throw err
 		
 			res.render('properties', { title: 'Properties' ,u:g , data: results ,logo:logoimg ,ph: adminPhone ,emailid: adminEmailid , add: adminAddress , page:'  <li><a href="/next">Next</a></li> ' });
@@ -361,9 +267,7 @@ router.get('/properties', function(req, res, next) {
   
 		
 });
-           
-  
-});
+        
 
 
 
@@ -373,25 +277,16 @@ router.get('/userProperties', function(req, res, next) {
 	  
 	if(user)
 	  {
-		  var con3 = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "",
-	database: 'rfs_db_5techg'
-
-	});
-	
-	con3.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
+		 
   
-	con3.query('SELECT * FROM users WHERE userId = '+user.userId+' ', function(err, results) {
+		let sql = " SELECT * FROM users WHERE userId = '"+ user.userId+"' ";
+		pool.query(sql, function(err, results) {
 			if (err) throw err
 			
 			g=' <style> .dropbtn { background-color: #4CAF50; color: white;  padding: 16px;  font-size: 16px; border: none; } .image-circle {  position: relative; display: inline-block; } .dropdown-content {  display: none;  position: absolute;  background-color: #f1f1f1;  min-width: 160px;  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);  z-index: 1; } .dropdown-content a {  color: black;  padding: 12px 16px;  text-decoration: none;  display: block; } .dropdown-content a:hover {background-color: #ddd;}.dropdown:hover .dropdown-content {display: block;}.dropdown:hover .dropbtn {background-color: #3e8e41;} </style> <div class="dropdown"> <img src="'+results[0].profileImage+'" class="img-circle" width="70" height="70">  </a>  <div class="dropdown-content">    <a href="/userProfile">Profile</a>    <a href="/userProperties">Properties</a> <a href="/submitProperty">Submit Property</a>   <a href="/Logout">Logout</a>  </div> </div>  <br>';
 	  
-	});
-	});
+		});
+	
 	
 	
 	}
@@ -400,23 +295,12 @@ router.get('/userProperties', function(req, res, next) {
 		  g='<a href="/register"> <button class="navbar-btn nav-button wow bounceInRight login" data-wow-delay="0.45s">Login</button>  </a>';
 	  }
 	  
-	  var con6 = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "",
-	database: 'rfs_db_5techg'
-
-	});
-	
-	con6.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
-  
-
+	 
   
   if(user){
-  
-   con6.query('SELECT * FROM properties where userId = '+user.userId+' ', function(err, results) {
+
+	let sql = " SELECT * FROM properties where userId = '"+ user.userId+"' ";
+		pool.query(sql, function(err, results) {
 			if (err) throw err
 		
 			res.render('userProperties', { title: 'UserProperties' ,u:g , data: results ,logo:logoimg ,ph: adminPhone ,emailid: adminEmailid  , add: adminAddress , page:'' });
@@ -435,8 +319,6 @@ router.get('/userProperties', function(req, res, next) {
 		
 });
            
-  
-});
 
 
 router.get('/next', function(req, res, next) {
@@ -447,24 +329,14 @@ router.get('/next', function(req, res, next) {
 	  
 	 if(user)
 	  {
-		  var con3 = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "",
-	database: 'rfs_db_5techg'
-
-	});
-	
-	con3.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
   
-	con3.query('SELECT * FROM users WHERE userId = '+ user.userId+' ', function(err, results) {
+		let sql = " SELECT * FROM users WHERE userId = '"+ user.userId+"' ";
+		pool.query(sql, function(err, results) {
+		
 			if (err) throw err
 			
 			g=' <style> .dropbtn { background-color: #4CAF50; color: white;  padding: 16px;  font-size: 16px; border: none; } .image-circle {  position: relative; display: inline-block; } .dropdown-content {  display: none;  position: absolute;  background-color: #f1f1f1;  min-width: 160px;  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);  z-index: 1; } .dropdown-content a {  color: black;  padding: 12px 16px;  text-decoration: none;  display: block; } .dropdown-content a:hover {background-color: #ddd;}.dropdown:hover .dropdown-content {display: block;}.dropdown:hover .dropbtn {background-color: #3e8e41;} </style> <div class="dropdown"> <img src="'+results[0].profileImage+'" class="img-circle" width="70" height="70">  </a>  <div class="dropdown-content">    <a href="/userProfile">Profile</a>    <a href="/userProperties">Properties</a> <a href="/submitProperty">Submit Property</a>   <a href="/Logout">Logout</a>  </div> </div>  <br>';
 	  
-	});
 	});
 	
 	
@@ -474,18 +346,8 @@ router.get('/next', function(req, res, next) {
 		  g='<a href="/register"> <button class="navbar-btn nav-button wow bounceInRight login" data-wow-delay="0.45s">Login</button>  </a>';
 	  }
 	  
-	  var con = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "",
-	database: 'rfs_db_5techg'
-
-	});
+	 
 	
-	con.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
-  
   currPage++;
   
 	if(currPage==totalPages)
@@ -498,7 +360,8 @@ router.get('/next', function(req, res, next) {
 	{
   
   
-		con.query('SELECT * FROM properties WHERE propertyId > '+ currPage*12 +'  LIMIT 12  ', function(err, results) {
+		let sql = " SELECT * FROM properties WHERE propertyId > '"+ currPage*12 +"'  LIMIT 12 ";
+		pool.query(sql, function(err, results) {
         if (err) throw err
 		
 		res.render('properties', { title: 'Properties' ,u:g , data: results ,logo:logoimg ,ph: adminPhone ,emailid:adminEmailid , add: adminAddress , page: '  <li> <a href="/prev">Prev</a></li> <li><a href="/next">Next</a></li>' });
@@ -510,10 +373,11 @@ router.get('/next', function(req, res, next) {
 	}
 	else
 	{
-		con.query('SELECT * FROM properties WHERE propertyId > '+ currPage*12 +' LIMIT 12', function(err, results) {
+		let sql = " SELECT * FROM properties WHERE propertyId > '"+ currPage*12 +"' LIMIT 12 ";
+		pool.query(sql, function(err, results) {
         if (err) throw err
 		
-		res.render('properties', { title: 'Properties' ,u:g , data: results ,logo:logoimg ,ph: adminPhone ,emailid: adminEmailid , add: adminAddress , page: ' <li> <a href="/prev">Prev</a></li>' });
+			res.render('properties', { title: 'Properties' ,u:g , data: results ,logo:logoimg ,ph: adminPhone ,emailid: adminEmailid , add: adminAddress , page: ' <li> <a href="/prev">Prev</a></li>' });
 			
 		});
 	
@@ -524,10 +388,6 @@ router.get('/next', function(req, res, next) {
 });
 
            
-  
-});
-
-
 
 
 router.get('/prev', function(req, res, next) {
@@ -538,24 +398,14 @@ router.get('/prev', function(req, res, next) {
 	  
 	  if(user)
 	  {
-		  var con3 = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "",
-	database: 'rfs_db_5techg'
-
-	});
-	
-	con3.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
+		  
   
-	con3.query('SELECT * FROM users WHERE userId = '+ user.userId+' ', function(err, results) {
+		let sql = " SELECT * FROM users WHERE userId = '"+ user.userId+"' ";
+		pool.query(sql, function(err, results) {
 			if (err) throw err
 			
 			g=' <style> .dropbtn { background-color: #4CAF50; color: white;  padding: 16px;  font-size: 16px; border: none; } .image-circle {  position: relative; display: inline-block; } .dropdown-content {  display: none;  position: absolute;  background-color: #f1f1f1;  min-width: 160px;  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);  z-index: 1; } .dropdown-content a {  color: black;  padding: 12px 16px;  text-decoration: none;  display: block; } .dropdown-content a:hover {background-color: #ddd;}.dropdown:hover .dropdown-content {display: block;}.dropdown:hover .dropbtn {background-color: #3e8e41;} </style> <div class="dropdown"> <img src="'+results[0].profileImage+'" class="img-circle" width="70" height="70">  </a>  <div class="dropdown-content">    <a href="/userProfile">Profile</a>    <a href="/userProperties">Properties</a> <a href="/submitProperty">Submit Property</a>   <a href="/Logout">Logout</a>  </div> </div>  <br>';
 	  
-	});
 	});
 	
 	
@@ -565,18 +415,7 @@ router.get('/prev', function(req, res, next) {
 		  g='<a href="/register"> <button class="navbar-btn nav-button wow bounceInRight login" data-wow-delay="0.45s">Login</button>  </a>';
 	  }
 	  
-	  var con = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "",
-	database: 'rfs_db_5techg'
-
-	});
 	
-	con.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
-  
 	currPage--;
   
 	
@@ -589,11 +428,11 @@ router.get('/prev', function(req, res, next) {
 	if(currPage >0)
 	{
   
-  
-		con.query('SELECT * FROM properties WHERE propertyId > '+ currPage*12 +'  LIMIT 12  ', function(err, results) {
+		let sql = " SELECT * FROM properties WHERE propertyId > '"+ currPage*12 +"'  LIMIT 12 ";
+		pool.query(sql, function(err, results) {
         if (err) throw err
 		
-		res.render('properties', { title: 'Properties' ,u:g , data: results ,logo:logoimg ,ph: adminPhone ,emailid: adminEmailid  , add: adminAddress , page: ' <li> <a href="/prev">Prev</a></li> <li><a href="/next">Next</a></li>' });
+			res.render('properties', { title: 'Properties' ,u:g , data: results ,logo:logoimg ,ph: adminPhone ,emailid: adminEmailid  , add: adminAddress , page: ' <li> <a href="/prev">Prev</a></li> <li><a href="/next">Next</a></li>' });
 			
 		});
 	
@@ -602,10 +441,11 @@ router.get('/prev', function(req, res, next) {
 	}
 	else
 	{
-		con.query('SELECT * FROM properties WHERE propertyId > '+ currPage*12 +' LIMIT 12', function(err, results) {
+		let sql = " SELECT * FROM properties WHERE propertyId > '"+ currPage*12 +"' LIMIT 12";
+		pool.query(sql, function(err, results) {
         if (err) throw err
 		
-		res.render('properties', { title: 'Properties' ,u:g , data: results ,logo:logoimg ,ph: adminPhone ,emailid:adminEmailid  , add: adminAddress , page: ' <li> <a href="/next">Next</a></li>' });
+			res.render('properties', { title: 'Properties' ,u:g , data: results ,logo:logoimg ,ph: adminPhone ,emailid:adminEmailid  , add: adminAddress , page: ' <li> <a href="/next">Next</a></li>' });
 			
 		});
 	
@@ -616,14 +456,6 @@ router.get('/prev', function(req, res, next) {
 });
 
            
-  
-});
-
-
-
-
-
-
 
 router.post('/login', (req, res, next) => {
     
@@ -1076,9 +908,4 @@ router.post('/updateProfile', upload.single('wizard-picture'), (req, res , next)
 	
 });
 
-
-
-
 module.exports = router;
-
-
