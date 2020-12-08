@@ -12,11 +12,6 @@ const session = require('express-session');
 
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var contactRouter = require('./routes/contact');
-var propertiesRouter = require('./routes/properties');
-var registerRouter = require('./routes/register');
-var faqRouter = require('./routes/faq');
 
 var app = express();
 
@@ -46,11 +41,6 @@ app.use(session({
 
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/properties', propertiesRouter);
-app.use('/contact', contactRouter);
-app.use('/faq', faqRouter);
-app.use('/register', registerRouter);
 
 var con1 = mysql.createConnection({
 	host: "localhost",

@@ -922,7 +922,7 @@ router.post('/submitnewproperty', upload.single('wizard-picture'), (req, res , n
   if (err) throw err;
   console.log("Connected!");
   
-		var sql = "INSERT INTO properties (propertyImg,propertyName,propertyArea,propertyPrice,bedNumber,showerNumber,carParkings,topstatus,userId,propertyStatus,propertyDescription,propertyImg2,propertyImg3,propertyImg4) VALUES ('images/properties"+path+"','"+pnm+"','"+geo+"','"+prc+"','"+minbed+"','"+minbath+"','1','0','"+user.userId+"','"+pstatus+"','"+pd+"','images/properties/1/property2.jpg','images/properties/1/property3.jpg','images/properties/1/property4.jpg')";
+		var sql = "INSERT INTO properties (propertyImg,propertyName,propertyArea,propertyPrice,bedNumber,showerNumber,carParkings,topstatus,userId,propertyStatus,propertyDescription,propertyImg2,propertyImg3,propertyImg4) VALUES ('images/properties/"+path+"','"+pnm+"','"+geo+"','"+prc+"','"+minbed+"','"+minbath+"','1','0','"+user.userId+"','"+pstatus+"','"+pd+"','images/properties/1/property2.jpg','images/properties/1/property3.jpg','images/properties/1/property4.jpg')";
   con4.query(sql, function (err, result) {
     if (err) throw err;
     console.log("1 record inserted");
