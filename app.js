@@ -144,3 +144,8 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+
+// express JS listening port
+const PORT = 3000;
+// listening port
+app.listen(PORT, () => console.log(`App listening on port ${PORT}`));
