@@ -334,7 +334,7 @@ router.get('/properties', function(req, res, next) {
   
   if(currPage >= totalPages-1)
   {
-	  con.query('SELECT * FROM properties LIMIT 12', function(err, results) {
+	  con.query('SELECT * FROM properties', function(err, results) {
 			if (err) throw err
 		
 			res.render('properties', { title: 'Properties' ,u:g , data: results ,logo:logoimg ,ph: adminPhone ,emailid: adminEmailid  , add: adminAddress , page:'' });
