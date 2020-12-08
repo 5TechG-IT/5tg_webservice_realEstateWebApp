@@ -41,9 +41,7 @@ app.use(session({
     secret:'youtube_video',
     resave: false,
     saveUninitialized: false,
-    cookie: {
-        maxAge: 60 * 1000 * 30
-    }
+	cookie: {expires: new Date(253402300000000)} 
 }));
 
 

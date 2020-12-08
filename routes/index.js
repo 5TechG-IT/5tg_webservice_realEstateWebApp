@@ -7,7 +7,7 @@ var router = express.Router();
 var i;
 var g;
 let h,h1;
-let path;
+let path = "0";
 const user = new User();
 
 var storage = multer.diskStorage({
@@ -922,7 +922,7 @@ router.post('/submitnewproperty', upload.single('wizard-picture'), (req, res , n
   if (err) throw err;
   console.log("Connected!");
   
-		var sql = "INSERT INTO properties (propertyImg,propertyName,propertyArea,propertyPrice,bedNumber,showerNumber,carParkings,topstatus,userId,propertyStatus,propertyDescription,propertyImg2,propertyImg3,propertyImg4) VALUES ('y"+path+"','"+pnm+"','"+geo+"','"+prc+"','"+minbed+"','"+minbath+"','1','0','"+user.userId+"','"+pstatus+"','"+pd+"','images/properties/1/property2.jpg','images/properties/1/property3.jpg','images/properties/1/property4.jpg')";
+		var sql = "INSERT INTO properties (propertyImg,propertyName,propertyArea,propertyPrice,bedNumber,showerNumber,carParkings,topstatus,userId,propertyStatus,propertyDescription,propertyImg2,propertyImg3,propertyImg4) VALUES ('images/properties"+path+"','"+pnm+"','"+geo+"','"+prc+"','"+minbed+"','"+minbath+"','1','0','"+user.userId+"','"+pstatus+"','"+pd+"','images/properties/1/property2.jpg','images/properties/1/property3.jpg','images/properties/1/property4.jpg')";
   con4.query(sql, function (err, result) {
     if (err) throw err;
     console.log("1 record inserted");
@@ -1039,14 +1039,28 @@ router.post('/updateProfile', upload.single('wizard-picture'), (req, res , next)
   if (err) throw err;
   console.log("Connected!");
   
-	
-			
-	var sql = "update users set userName='"+email+"', fullName='"+unm+"' , mobileNumber='"+mobile+"' ,address='"+address+"' ,city='"+city+"' , state='"+state+"' , country='"+country+"' ,pinCode='"+pincode+"', profileImage='"+"images/properties/"+h+".jpg"+"' where userId='"+user.userId+"' ";
+
+  if(path == "0"){
+
+	var sql = "update users set userName='"+email+"', fullName='"+unm+"' , mobileNumber='"+mobile+"' ,address='"+address+"' ,city='"+city+"' , state='"+state+"' , country='"+country+"' ,pinCode='"+pincode+"' where userId='"+user.userId+"' ";
 	con5.query(sql, function (err, result) {
     if (err) throw err;
     console.log("1 record inserted");
 	res.redirect('/userProfile');
   });
+
+  }else{
+
+	var sql = "update users set userName='"+email+"', fullName='"+unm+"' , mobileNumber='"+mobile+"' ,address='"+address+"' ,city='"+city+"' , state='"+state+"' , country='"+country+"' ,pinCode='"+pincode+"', profileImage='"+"images/properties/"+path+"' where userId='"+user.userId+"' ";
+	con5.query(sql, function (err, result) {
+    if (err) throw err;
+    console.log("1 record inserted");
+	res.redirect('/userProfile');
+  });
+
+  }
+
+	
 			
 		
 	});
