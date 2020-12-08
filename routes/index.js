@@ -7,6 +7,7 @@ var router = express.Router();
 var i;
 var g;
 let h,h1;
+let path;
 const user = new User();
 
 var storage = multer.diskStorage({
@@ -15,6 +16,7 @@ var storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
 	  h=Date.now();
+	  path =  h +".jpg";
     cb(null, h + '.jpg') //Appending .jpg
   }
 })
@@ -511,7 +513,7 @@ router.get('/next', function(req, res, next) {
 		con.query('SELECT * FROM properties WHERE propertyId > '+ currPage*12 +' LIMIT 12', function(err, results) {
         if (err) throw err
 		
-		res.render('properties', { title: 'Properties' ,u:g , data: results ,logo:logoimg ,ph: adminPhone ,emailid: adminEmail , add: adminAddress , page: ' <li> <a href="/prev">Prev</a></li>' });
+		res.render('properties', { title: 'Properties' ,u:g , data: results ,logo:logoimg ,ph: adminPhone ,emailid: adminEmailid , add: adminAddress , page: ' <li> <a href="/prev">Prev</a></li>' });
 			
 		});
 	
@@ -888,7 +890,7 @@ router.post('/ViewProperty', function(req, res, next) {
   
 });
 
-router.post('/submitproperty', upload.single('wizard-picture'), (req, res , next) => {
+router.post('/submitnewproperty', upload.single('wizard-picture'), (req, res , next) => {
 	
 	var pnm=req.body.propertyname;
 	var prc=req.body.propertyprice;
@@ -906,7 +908,7 @@ router.post('/submitproperty', upload.single('wizard-picture'), (req, res , next
 	if(user){
 	
 	
-	console.log(pnm+" "+prc+" "+ph+" "+pd+" "+pst+" "+pc+" "+pstatus+" "+minbed+" "+minbath+" "+h+".jpg"+" "+geo);
+	// console.log(pnm+" "+prc+" "+ph+" "+pd+" "+pst+" "+pc+" "+pstatus+" "+minbed+" "+minbath+" "+h+".jpg"+" "+geo);
 	
 	 var con4 = mysql.createConnection({
 	host: "localhost",
@@ -920,7 +922,7 @@ router.post('/submitproperty', upload.single('wizard-picture'), (req, res , next
   if (err) throw err;
   console.log("Connected!");
   
-		var sql = "INSERT INTO properties (propertyImg,propertyName,propertyArea,propertyPrice,bedNumber,showerNumber,carParkings,topstatus,userId,propertyStatus,propertyDescription,propertyImg2,propertyImg3,propertyImg4) VALUES ('"+"images/properties/"+h+".jpg"+"','"+pnm+"','"+geo+"','"+prc+"','"+minbed+"','"+minbath+"','1','0','"+user.userId+"','"+pstatus+"','"+pd+"','images/properties/1/property2.jpg','images/properties/1/property3.jpg','images/properties/1/property4.jpg')";
+		var sql = "INSERT INTO properties (propertyImg,propertyName,propertyArea,propertyPrice,bedNumber,showerNumber,carParkings,topstatus,userId,propertyStatus,propertyDescription,propertyImg2,propertyImg3,propertyImg4) VALUES ('y"+path+"','"+pnm+"','"+geo+"','"+prc+"','"+minbed+"','"+minbath+"','1','0','"+user.userId+"','"+pstatus+"','"+pd+"','images/properties/1/property2.jpg','images/properties/1/property3.jpg','images/properties/1/property4.jpg')";
   con4.query(sql, function (err, result) {
     if (err) throw err;
     console.log("1 record inserted");
