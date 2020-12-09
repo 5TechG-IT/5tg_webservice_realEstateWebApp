@@ -486,10 +486,14 @@ router.get('/prev', function(req, res, next) {
 
 router.post('/login', (req, res, next) => {
     
-    user.login(req.body.username, req.body.password, function(result) {
-        if(result) {
+		let sql = " SELECT * FROM users WHERE userName = '"+req.body.username+"' and password = '"+req.body.password+"'";
+		pool.query(sql, function(err, result) {
+			if (err) throw err
+
+			console.log(result[0].userId);
+        if(result.length>0) {
             // Store the user data in a session.
-            req.session.user = result;
+            req.session.user = result[0];
             req.session.opp = 1;
             // redirect the user to the home page.
             res.redirect('/');
