@@ -4,6 +4,7 @@ var hbs = require('hbs');
 const multer = require('multer');
 const pool = require('../core/pool'); //for db connection
 const User = require('../core/user');
+var nodemailer = require('nodemailer');
 var router = express.Router();
 var i;
 var g;
@@ -103,6 +104,32 @@ router.get('/', function(req, res, next) {
 	});
   
 });
+
+router.get('/email', function(req, res, next) {
+
+			var transporter = nodemailer.createTransport({
+				service: 'gmail',
+				auth: {
+				user: 'webworkshop.5techg@gmail.com',
+				pass: 'webworkshop@123'
+				}
+			});
+			
+			var mailOptions = {
+				from: 'webworkshop.5techg@gmail.com',
+				to: 'kulkarni.abhishek2407@gmail.com',
+				subject: 'Sending Email using Node.js',
+				text: 'That was easy!'
+			};
+			
+			transporter.sendMail(mailOptions, function(error, info){
+				if (error) {
+				console.log(error);
+				} else {
+				console.log('Email sent: ' + info.response);
+				}
+			});
+	});
 	
   
 
