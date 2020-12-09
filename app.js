@@ -3,7 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
+const pool = require('./core/pool'); //for db connection
 var mysql = require('mysql');
 
 let logoimg,adminPhone,adminEmailid,adminAddress;
@@ -42,19 +42,9 @@ app.use(session({
 
 app.use('/', indexRouter);
 
-var con1 = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "",
-	database: 'rfs_db_5techg'
 
-	});
-	
-	con1.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
-  
-  con1.query('SELECT * FROM properties', function(err, result) {
+let sql = " SELECT * FROM properties ";
+pool.query(sql, function(err, result) {
         if (err) throw err
 		
 		let totalProperties = result.length;
@@ -64,8 +54,8 @@ var con1 = mysql.createConnection({
 			
       });
 	  
-	  
-	  con1.query('SELECT * FROM admindata', function(err, results) {
+	  let sql2 = " SELECT * FROM admindata ";
+	  pool.query(sql2, function(err, results) {
         if (err) throw err
 		
 		logoimg=results[0].logo;
@@ -73,16 +63,9 @@ var con1 = mysql.createConnection({
 		adminEmailid=results[0].adminEmailId;
 		adminAddress=results[0].adminAddress;
 		
-		
-		
-		
 			
-  });
+  	});
 	  
-	  
-	   });
-  
- 
 
 
 // catch 404 and forward to error handler
