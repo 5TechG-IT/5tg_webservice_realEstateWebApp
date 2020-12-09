@@ -5,9 +5,9 @@ const mysql = require('mysql');
  *  */
 const pool = mysql.createPool({
     connectionLimit: 10,
-    host: '207.180.210.115',
-    user: 'rfs_db_5techg_admin', // use your mysql username.
-    password: '3WRgbmiNHxfe3JK', // user your mysql password.
+    host: 'localhost',
+    user: 'root', // use your mysql username.
+    password: '', // user your mysql password.
     database: 'rfs_db_5techg'
 });
 

@@ -105,7 +105,13 @@ router.get('/', function(req, res, next) {
   
 });
 
-router.get('/email', function(req, res, next) {
+router.post('/email', function(req, res, next) {
+
+		var firstname =  req.body.firstname;
+		var lastname =  req.body.lastname;
+		var email=  req.body.email;
+		var subject =  req.body.subject;
+		var message =  req.body.message;
 
 			var transporter = nodemailer.createTransport({
 				service: 'gmail',
@@ -118,17 +124,25 @@ router.get('/email', function(req, res, next) {
 			var mailOptions = {
 				from: 'webworkshop.5techg@gmail.com',
 				to: 'kulkarni.abhishek2407@gmail.com',
-				subject: 'Sending Email using Node.js',
-				text: 'That was easy!'
+				subject: 'Regarding Enquiry on Real Estate Website',
+				text: 	'Name     :'+firstname+lastname+
+						'\nEmail Id :'+ email+
+						'\nSubject  :'+subject+
+						'\nMessage  :'+message
 			};
 			
 			transporter.sendMail(mailOptions, function(error, info){
 				if (error) {
 				console.log(error);
 				} else {
-				console.log('Email sent: ' + info.response);
+					console.log('Email sent: ' + info.response);
+
+					res.render('enquiry', { title: 'Home Page' ,logo:logoimg ,ph: adminPhone ,emailid: adminEmailid , add: adminAddress ,u:g });
+			
 				}
 			});
+
+			
 	});
 	
   
@@ -737,6 +751,9 @@ router.post('/sendenquiry', function(req, res, next){
 	
 	var pid=req.body.pid;
 	
+	var owneremail = req.body.owneremail;
+
+	var pname = req.body.pname;
 	
 	console.log(pid);
 	
@@ -757,20 +774,51 @@ router.post('/sendenquiry', function(req, res, next){
 			if (err) throw err
 			
 			
-			let sql2 = "INSERT INTO enquiry (propertyId,CustomerId) VALUES ('"+pid+"', '"+user.userId+"')";
+			let sql2 = "INSERT INTO enquiry (propertyId,customerId) VALUES ('"+pid+"', '"+user.userId+"')";
 			pool.query(sql2, function(err, result) {
 				if (err) throw err;
 				console.log("1 record inserted");
+
+				var transporter = nodemailer.createTransport({
+					service: 'gmail',
+					auth: {
+					user: 'webworkshop.5techg@gmail.com',
+					pass: 'webworkshop@123'
+					}
+				});
+				
+				var mailOptions = {
+					from: 'webworkshop.5techg@gmail.com',
+					to: owneremail,
+					subject: 'Regarding Property Enquiry on Real Estate Website',
+					text: 	'Name :'+results[0].fullName+
+							'\nEmail Id :'+results[0].userName+
+							'\nMobile :'+results[0].mobileNumber+
+							'\nProperty Name :'+pname
+				};
+				
+				transporter.sendMail(mailOptions, function(error, info){
+					if (error) {
+					console.log(error);
+					} else {
+						console.log('Email sent: ' + info.response);
+	
+						res.render('enquiry', { title: 'Home Page' ,logo:logoimg ,ph: adminPhone ,emailid: adminEmailid , add: adminAddress ,u:g });
+				
+					}
+				});
+
+				
+
 			});
 						
 			
-			g=' <style> .dropbtn { background-color: #4CAF50; color: white;  padding: 16px;  font-size: 16px; border: none; } .image-circle {  position: relative; display: inline-block; } .dropdown-content {  display: none;  position: absolute;  background-color: #f1f1f1;  min-width: 160px;  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);  z-index: 1; } .dropdown-content a {  color: black;  padding: 12px 16px;  text-decoration: none;  display: block; } .dropdown-content a:hover {background-color: #ddd;}.dropdown:hover .dropdown-content {display: block;}.dropdown:hover .dropbtn {background-color: #3e8e41;} </style> <div class="dropdown"> <img src="'+results[0].profileImage+'" class="img-circle" width="70" height="70">  </a>  <div class="dropdown-content">    <a href="/userProfile">Profile</a>    <a href="/userProperties">Properties</a> <a href="/submitProperty">Submit Property</a>   <a href="/Logout">Logout</a>  </div> </div>  <br>';
-	  
+			
 		});
+
+
 		
-		res.render('enquiry', { title: 'Home Page' ,logo:logoimg ,ph: adminPhone ,emailid: adminEmailid , add: adminAddress ,u:g });
 		
-	
 	}
 	else{
 		
