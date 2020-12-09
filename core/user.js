@@ -1,6 +1,4 @@
 const pool = require('./pool');
-const bcrypt = require('bcrypt');
-
 
 function User() {};
 
@@ -35,7 +33,6 @@ User.prototype = {
 
         var pwd = body.password;
         // Hash the password before insert it into the database.
-        body.password = bcrypt.hashSync(pwd,10);
 
         // this array will contain the values of the fields.
         var bind = [];
@@ -60,7 +57,7 @@ User.prototype = {
             // if there is a user by this username.
             if(user) {
                 // now we check his password.
-                if(bcrypt.compareSync(password, user.password)) {
+                if(password == user.password) {
                     // return his data.
                     callback(user);
                     return;
