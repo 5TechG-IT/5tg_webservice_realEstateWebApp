@@ -86,25 +86,15 @@ app.use(function(err, req, res, next) {
 	  
 	 if(user)
 	  {
-		  var con3 = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "",
-	database: 'rfs_db_5techg'
 
-	});
-	
-	con3.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
-  
-	con3.query('SELECT * FROM users WHERE userId = '+ user.userId+' ', function(err, results) {
+		let sql = " SELECT * FROM users WHERE userId = '"+ user.userId+"'";
+		pool.query(sql, function(err, results) {
 			if (err) throw err
 			
 			g=' <style> .dropbtn { background-color: #4CAF50; color: white;  padding: 16px;  font-size: 16px; border: none; } .image-circle {  position: relative; display: inline-block; } .dropdown-content {  display: none;  position: absolute;  background-color: #f1f1f1;  min-width: 160px;  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);  z-index: 1; } .dropdown-content a {  color: black;  padding: 12px 16px;  text-decoration: none;  display: block; } .dropdown-content a:hover {background-color: #ddd;}.dropdown:hover .dropdown-content {display: block;}.dropdown:hover .dropbtn {background-color: #3e8e41;} </style> <div class="dropdown"> <img src="'+results[0].profileImage+'" class="img-circle" width="70" height="70">  </a>  <div class="dropdown-content">    <a href="/userProfile">Profile</a>    <a href="userProperties">Properties</a> <a href="/submitProperty">Submit Property</a>   <a href="/Logout">Logout</a>  </div> </div>  <br>';
 	  
-	});
-	});
+		});
+	
 	
 	
 	}
