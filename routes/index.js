@@ -123,7 +123,7 @@ router.post('/email', function(req, res, next) {
 			
 			var mailOptions = {
 				from: 'webworkshop.5techg@gmail.com',
-				to: 'kulkarni.abhishek2407@gmail.com',
+				to: 'webworkshop.5techg@gmail.com',
 				subject: 'Regarding Enquiry on Real Estate Website',
 				text: 	'Name     :'+firstname+lastname+
 						'\nEmail Id :'+ email+
