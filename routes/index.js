@@ -549,13 +549,12 @@ pool.query(sql, function(err, results) {
 		if(flag==0)
 		{
 			
-			
-			
 			// prepare an object containing all user inputs.
 			let userInput = {
 				username: req.body.username,
 				fullname: req.body.fullname,
-				password: req.body.password
+				password: req.body.password,
+				profileimage : "/images/default-profile-picture.jpg"
 			};
 			// call create function. to create a new user. if there is no error this function will return it's id.
 			user.create(userInput, function(lastId) {
