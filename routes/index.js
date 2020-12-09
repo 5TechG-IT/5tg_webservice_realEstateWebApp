@@ -495,25 +495,9 @@ router.post('/signup', (req, res, next) => {
 	
 var flag=0;
 	
-	 var con2 = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "",
-	database: 'rfs_db_5techg'
-
-	
-
-	});
-	
-	con2.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected hn!");
- 
-  con2.query('SELECT * FROM users', function(err, results) {
+let sql = " SELECT * FROM users";
+pool.query(sql, function(err, results) {
         if (err) throw err
-		
-		
-		
 		
 		var unm=req.body.username;
 		
@@ -531,63 +515,60 @@ var flag=0;
 		}
 		
 		
-if(flag==0)
-{
-	
-	
-	
-    // prepare an object containing all user inputs.
-    let userInput = {
-        username: req.body.username,
-        fullname: req.body.fullname,
-        password: req.body.password
-    };
-    // call create function. to create a new user. if there is no error this function will return it's id.
-    user.create(userInput, function(lastId) {
-        // if the creation of the user goes well we should get an integer (id of the inserted user)
-        if(lastId) {
-            // Get the user data by it's id. and store it in a session.
-            user.find(lastId, function(result) {
-                req.session.user = result;
-                req.session.opp = 0;
-                res.redirect('/');
-            });
+		if(flag==0)
+		{
+			
+			
+			
+			// prepare an object containing all user inputs.
+			let userInput = {
+				username: req.body.username,
+				fullname: req.body.fullname,
+				password: req.body.password
+			};
+			// call create function. to create a new user. if there is no error this function will return it's id.
+			user.create(userInput, function(lastId) {
+				// if the creation of the user goes well we should get an integer (id of the inserted user)
+				if(lastId) {
+					// Get the user data by it's id. and store it in a session.
+					user.find(lastId, function(result) {
+						req.session.user = result;
+						req.session.opp = 0;
+						res.redirect('/');
+					});
 
-        }else {
-            console.log('Error creating a new user ...');
-        }
-    });
-	
-	
-}
-else
-{
-	let user = req.session.user;
-	  
-	  if(user)
-	  {
-		 res.redirect('/');
-		  
-	  }
-	  else
-	  {
-		  g=' <style> .dropbtn { background-color: #4CAF50; color: white;  padding: 16px;  font-size: 16px; border: none; } .image-circle {  position: relative; display: inline-block; } .dropdown-content {  display: none;  position: absolute;  background-color: #f1f1f1;  min-width: 160px;  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);  z-index: 1; } .dropdown-content a {  color: black;  padding: 12px 16px;  text-decoration: none;  display: block; } .dropdown-content a:hover {background-color: #ddd;}.dropdown:hover .dropdown-content {display: block;}.dropdown:hover .dropbtn {background-color: #3e8e41;} </style> <div class="dropdown"> <img src="assets/img/client-face1.png" class="img-circle">  </a>  <div class="dropdown-content">    <a href="/userProfile">Profile</a>    <a href="/userProperties">Properties</a> <a href="/submitProperty">Submit Property</a>   <a href="/Logout">Logout</a>  </div> </div>  <br>';
+				}else {
+					console.log('Error creating a new user ...');
+				}
+			});
+			
+			
+		}
+		else
+		{
+			let user = req.session.user;
+			
+			if(user)
+			{
+				res.redirect('/');
+				
+			}
+			else
+			{
+				g=' <style> .dropbtn { background-color: #4CAF50; color: white;  padding: 16px;  font-size: 16px; border: none; } .image-circle {  position: relative; display: inline-block; } .dropdown-content {  display: none;  position: absolute;  background-color: #f1f1f1;  min-width: 160px;  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);  z-index: 1; } .dropdown-content a {  color: black;  padding: 12px 16px;  text-decoration: none;  display: block; } .dropdown-content a:hover {background-color: #ddd;}.dropdown:hover .dropdown-content {display: block;}.dropdown:hover .dropbtn {background-color: #3e8e41;} </style> <div class="dropdown"> <img src="assets/img/client-face1.png" class="img-circle">  </a>  <div class="dropdown-content">    <a href="/userProfile">Profile</a>    <a href="/userProperties">Properties</a> <a href="/submitProperty">Submit Property</a>   <a href="/Logout">Logout</a>  </div> </div>  <br>';
 
-		  res.render('register', { title: 'Register' , u:g ,logo:logoimg ,ph: adminPhone ,emailid:adminEmailid , add: adminAddress , incorrect: '<style> #pass { background-color: red; font-weight: bold; font-family: Courier, Helvetica, sans-serif; font-size: 20px; text-align:center; color:white; } </style> <div id="pass" style:"background-color: red">User Already Exist</div>'});
-	  }
-	
-	
-	
-}
+				res.render('register', { title: 'Register' , u:g ,logo:logoimg ,ph: adminPhone ,emailid:adminEmailid , add: adminAddress , incorrect: '<style> #pass { background-color: red; font-weight: bold; font-family: Courier, Helvetica, sans-serif; font-size: 20px; text-align:center; color:white; } </style> <div id="pass" style:"background-color: red">User Already Exist</div>'});
+			}
+			
+			
+			
+		}
 		
 		});
   
   });
   
 
-
-
-});
 
 
 
@@ -611,33 +592,24 @@ router.get('/contact', function(req, res, next) {
 	  
 	  if(user)
 	  {
-		  var con3 = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "",
-	database: 'rfs_db_5techg'
-
-	});
-	
-	con3.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
-  
-	con3.query('SELECT * FROM users WHERE userId = '+ user.userId+' ', function(err, results) {
+		 
+		let sql = " SELECT * FROM users WHERE userId = '"+ user.userId+"' ";
+		pool.query(sql, function(err, results) {
 			if (err) throw err
 			
 			g=' <style> .dropbtn { background-color: #4CAF50; color: white;  padding: 16px;  font-size: 16px; border: none; } .image-circle {  position: relative; display: inline-block; } .dropdown-content {  display: none;  position: absolute;  background-color: #f1f1f1;  min-width: 160px;  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);  z-index: 1; } .dropdown-content a {  color: black;  padding: 12px 16px;  text-decoration: none;  display: block; } .dropdown-content a:hover {background-color: #ddd;}.dropdown:hover .dropdown-content {display: block;}.dropdown:hover .dropbtn {background-color: #3e8e41;} </style> <div class="dropdown"> <img src="'+results[0].profileImage+'" class="img-circle" width="70" height="70">  </a>  <div class="dropdown-content">    <a href="/userProfile">Profile</a>    <a href="/userProperties">Properties</a> <a href="/submitProperty">Submit Property</a>   <a href="/Logout">Logout</a>  </div> </div>  <br>';
 	  
-	});
-	});
+		});
+
 	
 	
 	}
-	  else
-	  {
+	else
+	{
 		  g='<a href="/register"> <button class="navbar-btn nav-button wow bounceInRight login" data-wow-delay="0.45s">Login</button>  </a>';
-	  }
-  res.render('contact', { title: 'Contact' , u :g ,logo:logoimg ,ph: adminPhone ,emailid:adminEmailid , add: adminAddress  });
+	}
+
+   res.render('contact', { title: 'Contact' , u :g ,logo:logoimg ,ph: adminPhone ,emailid:adminEmailid , add: adminAddress  });
 });
 
 
@@ -654,73 +626,48 @@ router.post('/ViewProperty', function(req, res, next) {
 	  
 	  if(user)
 	  {
-		  var con3 = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "",
-	database: 'rfs_db_5techg'
+		 
+		let sql = " SELECT * FROM users WHERE userId = '"+ user.userId+"' ";
+		pool.query(sql, function(err, results) {
+				if (err) throw err
+				
+				g=' <style> .dropbtn { background-color: #4CAF50; color: white;  padding: 16px;  font-size: 16px; border: none; } .image-circle {  position: relative; display: inline-block; } .dropdown-content {  display: none;  position: absolute;  background-color: #f1f1f1;  min-width: 160px;  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);  z-index: 1; } .dropdown-content a {  color: black;  padding: 12px 16px;  text-decoration: none;  display: block; } .dropdown-content a:hover {background-color: #ddd;}.dropdown:hover .dropdown-content {display: block;}.dropdown:hover .dropbtn {background-color: #3e8e41;} </style> <div class="dropdown"> <img src="'+results[0].profileImage+'" class="img-circle" width="70" height="70">  </a>  <div class="dropdown-content">    <a href="/userProfile">Profile</a>    <a href="/userProperties">Properties</a> <a href="/submitProperty">Submit Property</a>   <a href="/Logout">Logout</a>  </div> </div>  <br>';
+		
+		});
 
-
-	});
-	
-	con3.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
-  
-	con3.query('SELECT * FROM users WHERE userId = '+ user.userId+' ', function(err, results) {
-			if (err) throw err
-			
-			g=' <style> .dropbtn { background-color: #4CAF50; color: white;  padding: 16px;  font-size: 16px; border: none; } .image-circle {  position: relative; display: inline-block; } .dropdown-content {  display: none;  position: absolute;  background-color: #f1f1f1;  min-width: 160px;  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);  z-index: 1; } .dropdown-content a {  color: black;  padding: 12px 16px;  text-decoration: none;  display: block; } .dropdown-content a:hover {background-color: #ddd;}.dropdown:hover .dropdown-content {display: block;}.dropdown:hover .dropbtn {background-color: #3e8e41;} </style> <div class="dropdown"> <img src="'+results[0].profileImage+'" class="img-circle" width="70" height="70">  </a>  <div class="dropdown-content">    <a href="/userProfile">Profile</a>    <a href="/userProperties">Properties</a> <a href="/submitProperty">Submit Property</a>   <a href="/Logout">Logout</a>  </div> </div>  <br>';
-	  
-	});
-	});
 	
 	
 	}
-	  else
-	  {
+	else
+	{
 		
 		 g='<a href="/register"> <button class="navbar-btn nav-button wow bounceInRight login" data-wow-delay="0.45s">Login</button>  </a>';
-	  }
+	}
 	  
-	  var con = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "",
-	database: 'rfs_db_5techg'
 
-	});
-	
-	con.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
-  
-  con.query('SELECT * FROM properties WHERE propertyId= '+ propertyid+'  ', function(err, results) {
+	let sql = " SELECT * FROM properties WHERE propertyId= '"+ propertyid+"' ";
+	pool.query(sql, function(err, results) {
         if (err) throw err
 		
-		 con.query('SELECT * FROM users WHERE userId= '+ results[0].userId +' ', function(err, userResults) {
+		let sql2 = " SELECT * FROM users WHERE userId= '"+ results[0].userId +"' ";
+		pool.query(sql2, function(err, userResults) {
         if (err) throw err
 		
+			if(user){
+				res.render('viewProperty', { title: 'viewProperty' , sendenquiry:'<input type="submit" value="Send Enquiry"></input>', u :g , data1:userResults , h:' hi ', page: ' <li> <a href="/next">Next</a></li>' , data:results ,logo:logoimg ,ph: adminPhone ,emailid:adminEmailid , add: adminAddress });
+				
+			}
+			else{
+				
+				res.render('viewProperty', { title: 'viewProperty' , sendenquiry:'', u :g , data1:userResults , h:' hi ', page: ' <li> <a href="/next">Next</a></li>' , data:results ,logo:logoimg ,ph: adminPhone ,emailid:adminEmailid , add: adminAddress });
 		
-		if(user){
-			res.render('viewProperty', { title: 'viewProperty' , sendenquiry:'<input type="submit" value="Send Enquiry"></input>', u :g , data1:userResults , h:' hi ', page: ' <li> <a href="/next">Next</a></li>' , data:results ,logo:logoimg ,ph: adminPhone ,emailid:adminEmailid , add: adminAddress });
+			}
 			
-		}
-		else{
-			
-			res.render('viewProperty', { title: 'viewProperty' , sendenquiry:'', u :g , data1:userResults , h:' hi ', page: ' <li> <a href="/next">Next</a></li>' , data:results ,logo:logoimg ,ph: adminPhone ,emailid:adminEmailid , add: adminAddress });
-	
-		}
-			
-			 });
-      });
+		});
+    });
   
 });
 	
-	  
-	  
-  
-});
 
 router.post('/submitnewproperty', upload.single('wizard-picture'), (req, res , next) => {
 	
@@ -739,31 +686,15 @@ router.post('/submitnewproperty', upload.single('wizard-picture'), (req, res , n
 	
 	if(user){
 	
+		let sql = "INSERT INTO properties (propertyImg,propertyName,propertyArea,propertyPrice,bedNumber,showerNumber,carParkings,topstatus,userId,propertyStatus,propertyDescription,propertyImg2,propertyImg3,propertyImg4) VALUES ('images/properties/"+path+"','"+pnm+"','"+geo+"','"+prc+"','"+minbed+"','"+minbath+"','1','0','"+user.userId+"','"+pstatus+"','"+pd+"','images/properties/1/property2.jpg','images/properties/1/property3.jpg','images/properties/1/property4.jpg')";
+		pool.query(sql, function(err, results) {
+			if (err) throw err;
+			console.log("1 record inserted");
+		});
 	
-	// console.log(pnm+" "+prc+" "+ph+" "+pd+" "+pst+" "+pc+" "+pstatus+" "+minbed+" "+minbath+" "+h+".jpg"+" "+geo);
-	
-	 var con4 = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "",
-	database: 'rfs_db_5techg'
-	
-	});
-	
-	con4.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
-  
-		var sql = "INSERT INTO properties (propertyImg,propertyName,propertyArea,propertyPrice,bedNumber,showerNumber,carParkings,topstatus,userId,propertyStatus,propertyDescription,propertyImg2,propertyImg3,propertyImg4) VALUES ('images/properties/"+path+"','"+pnm+"','"+geo+"','"+prc+"','"+minbed+"','"+minbath+"','1','0','"+user.userId+"','"+pstatus+"','"+pd+"','images/properties/1/property2.jpg','images/properties/1/property3.jpg','images/properties/1/property4.jpg')";
-  con4.query(sql, function (err, result) {
-    if (err) throw err;
-    console.log("1 record inserted");
-  });
-	
-	});
 	
         
-	res.redirect('/');
+		res.redirect('/');
    
   
 	}
@@ -790,41 +721,25 @@ router.post('/sendenquiry', function(req, res, next){
 	  
 	  if(user)
 	  {
-		  var con3 = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "",
-	database: 'rfs_db_5techg'
-
-
-	});
-	
-	con3.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
-  
-	con3.query('SELECT * FROM users WHERE userId = '+ user.userId+' ', function(err, results) {
+		 
+		let sql = " SELECT * FROM users WHERE userId = '"+ user.userId+"' ";
+		pool.query(sql, function(err, results) {
 			if (err) throw err
 			
 			
-			var sql = "INSERT INTO enquiry (propertyId,CustomerId) VALUES ('"+pid+"', '"+user.userId+"')";
-  con3.query(sql, function (err, result) {
-    if (err) throw err;
-    console.log("1 record inserted");
-  });
-			
+			let sql2 = "INSERT INTO enquiry (propertyId,CustomerId) VALUES ('"+pid+"', '"+user.userId+"')";
+			pool.query(sql2, function(err, result) {
+				if (err) throw err;
+				console.log("1 record inserted");
+			});
+						
 			
 			g=' <style> .dropbtn { background-color: #4CAF50; color: white;  padding: 16px;  font-size: 16px; border: none; } .image-circle {  position: relative; display: inline-block; } .dropdown-content {  display: none;  position: absolute;  background-color: #f1f1f1;  min-width: 160px;  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);  z-index: 1; } .dropdown-content a {  color: black;  padding: 12px 16px;  text-decoration: none;  display: block; } .dropdown-content a:hover {background-color: #ddd;}.dropdown:hover .dropdown-content {display: block;}.dropdown:hover .dropbtn {background-color: #3e8e41;} </style> <div class="dropdown"> <img src="'+results[0].profileImage+'" class="img-circle" width="70" height="70">  </a>  <div class="dropdown-content">    <a href="/userProfile">Profile</a>    <a href="/userProperties">Properties</a> <a href="/submitProperty">Submit Property</a>   <a href="/Logout">Logout</a>  </div> </div>  <br>';
 	  
-	});
-	});
-	
-	 
-	
-	res.render('enquiry', { title: 'Home Page' ,logo:logoimg ,ph: adminPhone ,emailid: adminEmailid , add: adminAddress ,u:g });
-	
-	
-	
+		});
+		
+		res.render('enquiry', { title: 'Home Page' ,logo:logoimg ,ph: adminPhone ,emailid: adminEmailid , add: adminAddress ,u:g });
+		
 	
 	}
 	else{
@@ -851,51 +766,31 @@ router.post('/updateProfile', upload.single('wizard-picture'), (req, res , next)
 	
 	let user = req.session.user;
 	
-
-
-	
-	
-	  
 	  if(user)
 	  {
-		  var con5 = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "",
-	database: 'rfs_db_5techg'
-
-
-	});
-	
-	con5.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
   
 
-  if(path == "0"){
+		if(path == "0"){
 
-	var sql = "update users set userName='"+email+"', fullName='"+unm+"' , mobileNumber='"+mobile+"' ,address='"+address+"' ,city='"+city+"' , state='"+state+"' , country='"+country+"' ,pinCode='"+pincode+"' where userId='"+user.userId+"' ";
-	con5.query(sql, function (err, result) {
-    if (err) throw err;
-    console.log("1 record inserted");
-	res.redirect('/userProfile');
-  });
+			let sql = "update users set userName='"+email+"', fullName='"+unm+"' , mobileNumber='"+mobile+"' ,address='"+address+"' ,city='"+city+"' , state='"+state+"' , country='"+country+"' ,pinCode='"+pincode+"' where userId='"+user.userId+"' ";
+			pool.query(sql, function(err, results) {
+				if (err) throw err;
 
-  }else{
+				console.log("1 record inserted");
+				res.redirect('/userProfile');
+			});
 
-	var sql = "update users set userName='"+email+"', fullName='"+unm+"' , mobileNumber='"+mobile+"' ,address='"+address+"' ,city='"+city+"' , state='"+state+"' , country='"+country+"' ,pinCode='"+pincode+"', profileImage='"+"images/properties/"+path+"' where userId='"+user.userId+"' ";
-	con5.query(sql, function (err, result) {
-    if (err) throw err;
-    console.log("1 record inserted");
-	res.redirect('/userProfile');
-  });
+		}else{
 
-  }
+			var sql = "update users set userName='"+email+"', fullName='"+unm+"' , mobileNumber='"+mobile+"' ,address='"+address+"' ,city='"+city+"' , state='"+state+"' , country='"+country+"' ,pinCode='"+pincode+"', profileImage='"+"images/properties/"+path+"' where userId='"+user.userId+"' ";
+			pool.query(sql, function(err, results) {
+				if (err) throw err;
 
-	
-			
-		
-	});
+				console.log("1 record inserted");
+				res.redirect('/userProfile');
+			});
+
+		}
 	
 	
 	}
