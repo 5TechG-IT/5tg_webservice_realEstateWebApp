@@ -5,17 +5,17 @@ const mysql = require('mysql');
  *  */
 const pool = mysql.createPool({
     connectionLimit: 10,
-    host: 'localhost',
-    user: 'root', // use your mysql username.
-    password: '', // user your mysql password.
+    host: '207.180.210.115',
+    user: 'rfs_db_5techg_admin', // use your mysql username.
+    password: '3WRgbmiNHxfe3JK', // user your mysql password.
     database: 'rfs_db_5techg'
 });
 
 pool.getConnection((err, connection) => {
-    if(err) 
+    if (err)
         console.error("Something went wrong connecting to the database ...");
-    
-    if(connection)
+
+    if (connection)
         connection.release();
     return;
 });
