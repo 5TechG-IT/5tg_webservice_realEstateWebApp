@@ -125,7 +125,7 @@ router.post('/email', function(req, res, next) {
 				from: 'webworkshop.5techg@gmail.com',
 				to: 'webworkshop.5techg@gmail.com',
 				subject: 'Regarding Enquiry on Real Estate Website',
-				text: 	'Name     :'+firstname+lastname+
+				text: 	'Name     :'+firstname+" "+lastname+
 						'\nEmail Id :'+ email+
 						'\nSubject  :'+subject+
 						'\nMessage  :'+message
@@ -272,38 +272,35 @@ router.get('/properties', function(req, res, next) {
 	  {
 		  g='<a href="/register"> <button class="navbar-btn nav-button wow bounceInRight login" data-wow-delay="0.45s">Login</button>  </a>';
 	  }
-	  
+
+
 	 
+    let sql = " SELECT count(*) as countp FROM properties  ";
+		pool.query(sql, function(err, result) {
+		    if (err) throw err
+		    
+  		currPage=0;
+
   
-  currPage=0;
   
-  if(currPage >= totalPages-1)
-  {
-		let sql = " SELECT * FROM properties ";
-		pool.query(sql, function(err, results) {
-			if (err) throw err
-		
-			res.render('properties', { title: 'Properties' ,u:g , data: results ,logo:logoimg ,ph: adminPhone ,emailid: adminEmailid  , add: adminAddress , page:'' });
-			
-		});
   
-	  
-  }
-  else
-  {
 		let sql = "SELECT * FROM properties LIMIT 12";
 		pool.query(sql, function(err, results) {
 			if (err) throw err
+
+			if(result[0].countp>12){
 		
 			res.render('properties', { title: 'Properties' ,u:g , data: results ,logo:logoimg ,ph: adminPhone ,emailid: adminEmailid , add: adminAddress , page:'  <li><a href="/next">Next</a></li> ' });
+		}else{
+			res.render('properties', { title: 'Properties' ,u:g , data: results ,logo:logoimg ,ph: adminPhone ,emailid: adminEmailid , add: adminAddress , page:'  ' });
+		}
+		  
 			
 		});
   
-	  
-  }
   
 
-  
+});
  
   
 		
